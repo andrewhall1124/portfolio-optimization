@@ -7,7 +7,8 @@ This python script uses the TwelveData API
 - It should look like this (do not surround the key in quotation marks)
 
 [API]
-API_KEY = <your-api-key>
+
+API_KEY = your-api-key
 
 The batch-portfolio.py file utilizes a batch API call to improve speed
 Note that the TwelveData API doesn't allow for more than 8 API calls per minute
