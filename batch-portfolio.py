@@ -4,6 +4,7 @@ import numpy as np
 import math
 import time
 import configparser
+import sys
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -11,13 +12,16 @@ config.read('config.ini')
 # Record the start time
 start_time = time.time()
 
-# tickers = ['ibm','aapl','meta','googl','adbe', 'dis', 'adsk', 'nvda']
-# weights = np.array([.2, .2, .1, .1, .1, .1, .1, .1])
-tickers = ['ibm', 'aapl']
-weights = np.array([.5, .5])
+tickers = ['ibm','aapl','meta','googl','adbe', 'dis', 'adsk', 'nvda']
+weights = np.array([.2, .2, .1, .1, .1, .1, .1, .1])
 start_date = '2020-09-23 15:03:00'
 end_date = '2023-09-23 15:04:00'
 interval = '1week'
+
+# Check for matching lengths of tickers and weights
+if len(tickers) != len(weights):
+  print(f"\nERROR: Tickers and weights length do not match. Tickers has length {len(tickers)} and weights has length {len(weights)}\n")
+  sys.exit(0)
 
 # Fetching stock data from 12 Data API
 API_KEY = config['API']['API_KEY']

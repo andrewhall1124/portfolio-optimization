@@ -4,6 +4,7 @@ import numpy as np
 import math
 import time
 import configparser
+import sys
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -12,11 +13,15 @@ config.read('config.ini')
 start_time = time.time()
 
 tickers = ['aapl', 'ibm', 'meta', 'googl', 'adbe']
-# string_tickers = ",".join(tickers)
 weights = np.array([.2, .2, .2, .2, .2])
 start_date = '2020-09-23 15:03:00'
 end_date = '2023-09-23 15:04:00'
 interval = '1week'
+
+# Check for matching lengths of tickers and weights
+if len(tickers) != len(weights):
+  print(f"\nERROR: Tickers and weights length do not match. Tickers has length {len(tickers)} and weights has length {len(weights)}\n")
+  sys.exit(0)
 
 # Function for fetching stock data from 12 Data API
 def fetch_stock_data(symbol):
