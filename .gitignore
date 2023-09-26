@@ -1,1 +1,7 @@
 config.ini
+all-tickers.csv
+all-tickers.py
+batch-portfolio.py
+DJIA_Apr112014_Apr112019.csv
+PaiViji.py
+portfolio-optimizer.py

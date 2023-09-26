@@ -11,7 +11,7 @@ config.read('config.ini')
 # Record the start time
 start_time = time.time()
 
-tickers = ['f', 'dis', 'nvda'] #### INPUT IS RIGHT HERE
+tickers = ['aapl', 'meta', 'ibm'] #### INPUT IS RIGHT HERE
 start_date = '2020-09-23 15:03:00'
 end_date = '2023-09-23 15:04:00'
 interval = '1day'
@@ -68,7 +68,7 @@ def maximize_that_fricking_sharpe_ratio(average_returns, covariance_matrix, risk
     
     
     #define bounds and other parameters
-    xinit=np.repeat(0.33, portfolio_size)
+    xinit=np.repeat(1/portfolio_size, portfolio_size)
     cons = ({'type': 'eq', 'fun':constraintEq})
     lb = 0
     ub = 1
