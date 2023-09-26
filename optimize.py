@@ -11,7 +11,7 @@ config.read('config.ini')
 # Record the start time
 start_time = time.time()
 
-tickers = ['f', 'dis', 'vz', 'nvda']
+tickers = ['f', 'dis', 'vz', 'nvda'] #### INPUT IS RIGHT HERE
 start_date = '2020-09-23 15:03:00'
 end_date = '2023-09-23 15:04:00'
 interval = '1day'
