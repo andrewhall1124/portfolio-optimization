@@ -89,11 +89,15 @@ annualized_risk = np.sqrt(portfolio_risk*251)
 annualize_return = 251*np.array(portfolio_return) 
 sharpe_ratio = (annualize_return-annual_risk_free)/annualized_risk 
 
-#Set precision for printing results
+# Set precision for printing results
 np.set_printoptions(precision=3, suppress = True)
 
-#Display results
-print('Maximal Sharpe Ratio: ', sharpe_ratio)
-print('\nAnnualized Risk (%):  ',annualized_risk)
-print( '\nAnnualized Expected Portfolio Return(%):  ', annualize_return)
-print('\nOptimal weights (%):\n',  optimal_weights.T*100 )
+# Display results
+print('Maximal Sharpe Ratio:  ', sharpe_ratio)
+print('\nAnnualized Risk (%):  ', annualized_risk)
+print('\nAnnualized Expected Portfolio Return (%):  ', annualize_return)
+print('\nOptimal weights (%):')
+
+# Print the optimal weights with the ticker symbol
+for i in range(len(ticker_symbols)):
+  print('{} | {:.2f}'.format(ticker_symbols[i], optimal_weights[0][i] * 100))
