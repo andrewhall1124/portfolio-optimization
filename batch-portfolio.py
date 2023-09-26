@@ -12,8 +12,8 @@ config.read('config.ini')
 # Record the start time
 start_time = time.time()
 
-tickers = ['ibm','aapl','meta','googl','adbe', 'dis', 'adsk', 'nvda']
-weights = np.array([.2, .2, .1, .1, .1, .1, .1, .1])
+tickers = ['ibm','aapl','meta']
+weights = np.array([.3, .3, .4])
 start_date = '2020-09-23 15:03:00'
 end_date = '2023-09-23 15:04:00'
 interval = '1week'
@@ -40,12 +40,12 @@ if response.status_code == 200:
     data['close'] = pd.to_numeric(data['close'])
     data['return'] = data['close'].pct_change() * 100
     data['return'] = data['return'].fillna(0)
-    average_return = data['return'].mean()
+    average_returns = data['return'].mean()
     std_return = data['return'].std()
     returns = [float(x) for x in data['return'].values]
     stock_data = {
         "ticker": ticker,
-        "average_return": average_return,
+        "average_return": average_returns,
         "std_return": std_return,
         "returns": returns
     }
@@ -56,8 +56,14 @@ else:
 
 # Calculate covariance matrix
 print("Calculating covariance matrix\n")
-returns_array = np.array([stock['returns'] for stock in stock_data_list])
-covariance_matrix = np.cov(returns_array)
+stock_returns_matrix = np.array([stock['returns'] for stock in stock_data_list])
+average_returns = np.mean(stock_returns_matrix, axis = 1)
+covariance_matrix = np.cov(stock_returns_matrix)
+
+print("Stock returns matrix  ", stock_returns_matrix)
+print("Average returns array  ", average_returns)
+print("Covariance matrix  ", covariance_matrix)
+
     
 # Function for calculating portfolio return
 def calculate_portfolio_return(weights, stock_data_list):
