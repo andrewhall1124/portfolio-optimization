@@ -11,7 +11,7 @@ config.read('config.ini')
 # Record the start time
 start_time = time.time()
 
-tickers = ['f', 'dis', 'vz', 'nvda'] #### INPUT IS RIGHT HERE
+tickers = ['f', 'dis', 'nvda'] #### INPUT IS RIGHT HERE
 start_date = '2020-09-23 15:03:00'
 end_date = '2023-09-23 15:04:00'
 interval = '1day'
@@ -87,7 +87,7 @@ def maximize_that_fricking_sharpe_ratio(average_returns, covariance_matrix, risk
 #Initialize portfolio
 portfolio_size = len(tickers)
 annual_risk_free= 5.4 / 100
-daily_risk_free = (np.power((1 + annual_risk_free),  (1.0 / 360.0)) - 1.0) * 100 
+daily_risk_free = (np.power((1 + annual_risk_free),  (1.0 / 365.0)) - 1.0) * 100 
 
 #Compute maximal Sharpe Ratio and optimal weights
 result = maximize_that_fricking_sharpe_ratio(average_returns, covariance_matrix, daily_risk_free, portfolio_size)
@@ -96,8 +96,8 @@ optimal_weights = np.array([result.x])
 #Compute other metrics  
 portfolio_risk = np.matmul((np.matmul(optimal_weights,covariance_matrix)), np.transpose(optimal_weights))
 portfolio_return = np.matmul(np.array(average_returns),optimal_weights.T)
-annualized_risk = np.sqrt(portfolio_risk*251) 
-annualize_return = 251*np.array(portfolio_return) 
+annualized_risk = np.sqrt(portfolio_risk*365) 
+annualize_return = 365*np.array(portfolio_return) 
 sharpe_ratio = (annualize_return-annual_risk_free)/annualized_risk 
 
 # Set precision for printing results
