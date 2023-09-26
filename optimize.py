@@ -12,14 +12,13 @@ config.read('config.ini')
 # Record the start time
 start_time = time.time()
 
-# tickers = ['ibm','aapl','meta','googl','adbe', 'dis', 'adsk', 'nvda']
+# initialize data
 tickers = ['ibm','aapl','meta', 'googl']
 weights = np.array([.25,.25,.25,.25])
 start_date = '2020-09-23 15:03:00'
 end_date = '2023-09-23 15:04:00'
 interval = '1day'
-portfolio_size = len(tickers)
-risk_free = 5.46
+risk_free = 5.46 / 100
 risk_free = (np.power((1 + risk_free),  (1.0 / 360.0)) - 1.0) * 100 
 
 # Fetching stock data from 12 Data API
@@ -72,39 +71,6 @@ def calculate_portfolio_std(weights, covariance_matrix):
 #Function for calculating portfolio sharpe ratio
 def calculate_portfolio_sharpe(weights, average_returns, covariance_matrix):
    return (calculate_portfolio_return(weights,average_returns) - risk_free) / calculate_portfolio_std(weights, covariance_matrix)
-
-def optimize_sharpe(average_returns, covariance_matrix, risk_free, portfolio_size):
-    
-    # define maximization of Sharpe Ratio
-    def  f(weights, average_returns, covariance_matrix, risk_free):
-        funcDenomr = calculate_portfolio_std(weights, covariance_matrix)
-        funcNumer = calculate_portfolio_return(weights, average_returns)-risk_free
-        func = -(funcNumer / funcDenomr)
-        return func
-
-    #define equality constraint representing fully invested portfolio
-    def constraintEq(x):
-        A=np.ones(x.shape)
-        b=1
-        constraintVal = np.matmul(A,x.T)-b 
-        return constraintVal
-    
-    
-    #define bounds and other parameters
-    xinit=np.repeat(0.33, portfolio_size)
-    cons = ({'type': 'eq', 'fun':constraintEq})
-    lb = 0
-    ub = 1
-    bnds = tuple([(lb,ub) for x in xinit])
-    
-    #invoke minimize solver
-    opt = optimize.minimize (
-      f, x0 = xinit, args = (average_returns, covariance_matrix,\
-      risk_free, portfolio_size), method = 'SLSQP',  \
-      bounds = bnds, constraints = cons, tol = 10**-3
-    )
-    
-    return opt
 
 print(f"Tickers: {tickers}")
 print(f"Weights: {weights}")
