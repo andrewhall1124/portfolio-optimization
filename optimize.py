@@ -17,10 +17,10 @@ tickers = ['ibm','aapl','meta', 'googl']
 weights = np.array([.25,.25,.25,.25])
 start_date = '2020-09-23 15:03:00'
 end_date = '2023-09-23 15:04:00'
-interval = '1week'
+interval = '1day'
 portfolio_size = len(tickers)
 risk_free = 5.46
-risk_free = (np.power((1 + risk_free),  (1.0 / 52.0)) - 1.0) * 100 
+risk_free = (np.power((1 + risk_free),  (1.0 / 360.0)) - 1.0) * 100 
 
 # Fetching stock data from 12 Data API
 API_KEY = config['API']['API_KEY']
@@ -69,6 +69,10 @@ def calculate_portfolio_return(weights, average_returns):
 def calculate_portfolio_std(weights, covariance_matrix):
   return np.sqrt(np.dot(np.matmul(weights, covariance_matrix), weights))
 
+#Function for calculating portfolio sharpe ratio
+def calculate_portfolio_sharpe(weights, average_returns, covariance_matrix):
+   return (calculate_portfolio_return(weights,average_returns) - risk_free) / calculate_portfolio_std(weights, covariance_matrix)
+
 def optimize_sharpe(average_returns, covariance_matrix, risk_free, portfolio_size):
     
     # define maximization of Sharpe Ratio
@@ -105,7 +109,9 @@ def optimize_sharpe(average_returns, covariance_matrix, risk_free, portfolio_siz
 print(f"Tickers: {tickers}")
 print(f"Weights: {weights}")
 print(f"Portfolio return: {calculate_portfolio_return(weights, average_returns)}")
+print(f"Risk free rate: {risk_free}")
 print(f"Portfolio variance: {calculate_portfolio_std(weights,covariance_matrix)}")
+print(f"Portfolio sharpe: {calculate_portfolio_sharpe(weights, average_returns, covariance_matrix)}")
 
 # Output elapsed time
 end_time = time.time()
