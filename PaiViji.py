@@ -2,11 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy import optimize 
 
-#function to undertake Sharpe Ratio maximization subject to basic constraints of the portfolio
-
-# Portfolio size should be 29 from the dataset
-
-def MaximizeSharpeRatioOptmzn(average_returns, covariance_matrix, risk_free, portfolio_size):
+def maximize_that_fricking_sharpe_ratio(average_returns, covariance_matrix, risk_free, portfolio_size):
     
     # define maximization of Sharpe Ratio using principle of duality
     def  f(x, average_returns, covariance_matrix, risk_free, portfolio_size):
@@ -37,20 +33,15 @@ def MaximizeSharpeRatioOptmzn(average_returns, covariance_matrix, risk_free, por
     
     return opt
 
-
-
-
-
+## Fetching and setting up all of the data ##
 
 #Calculate average_returns and covariance_matrix
-#input k portfolio 1 dataset comprising 15 stocks
 stock_file_name = 'DJIA_Apr112014_Apr112019.csv'
 m = 1259  #excluding header
 columns = 29  #excluding date
 
-#read stock prices 
+#Read in stock prices 
 df = pd.read_csv(stock_file_name,  nrows= m)
-print(df)
 
 #Extract ticker symbols
 ticker_symbols = df.columns[1:columns+1].tolist()
@@ -72,57 +63,37 @@ def compute_stock_returns(stock_price, rows, columns):
 
 stock_returns_matrix = compute_stock_returns(stock_prices_matrix, m, n)
 
-
-#set precision for printing results
-# np.set_printoptions(precision=10, suppress = True)
-
 #Calculate average_returns and covariance matrix
 average_returns = np.mean(stock_returns_matrix, axis = 0)
 covariance_matrix = np.cov(stock_returns_matrix, rowvar=False)
 
+## Now the fun begins ##
 
-
-
-
-
-#obtain maximal Sharpe Ratio for k-portfolio 1 of Dow stocks
-
-#set portfolio size
+#Initialize portfolio
 portfolio_size = columns
+annual_risk_free= 5.4 / 100
+daily_risk_free = (np.power((1 + annual_risk_free),  (1.0 / 360.0)) - 1.0) * 100 
 
-#set risk free asset rate of return
-Rf=3  # April 2019 average risk  free rate of return in USA approx 3%
-annRiskFreeRate = Rf/100
-
-#compute daily risk free rate in percentage
-r0 = (np.power((1 + annRiskFreeRate),  (1.0 / 360.0)) - 1.0) * 100 
-print('\nRisk free rate (daily %): ', end="")
-print ("{0:.3f}".format(r0)) 
-
-#initialization
-xOptimal =[]
 minRiskPoint = []
 expPortfolioReturnPoint =[]
-maxSharpeRatio = 0
+sharpe_ratio = 0
 
-#compute maximal Sharpe Ratio and optimal weights
-result = MaximizeSharpeRatioOptmzn(average_returns, covariance_matrix, r0, portfolio_size)
-xOptimal.append(result.x)
+#Compute maximal Sharpe Ratio and optimal weights
+result = maximize_that_fricking_sharpe_ratio(average_returns, covariance_matrix, daily_risk_free, portfolio_size)
+optimal_weights = np.array([result.x])
 
-    
-#compute risk returns and max Sharpe Ratio of the optimal portfolio   
-xOptimalArray = np.array(xOptimal)
-Risk = np.matmul((np.matmul(xOptimalArray,covariance_matrix)), np.transpose(xOptimalArray))
-expReturn = np.matmul(np.array(average_returns),xOptimalArray.T)
-annRisk =   np.sqrt(Risk*251) 
-annRet = 251*np.array(expReturn) 
-maxSharpeRatio = (annRet-Rf)/annRisk 
+#Compute other metrics  
+portfolio_risk = np.matmul((np.matmul(optimal_weights,covariance_matrix)), np.transpose(optimal_weights))
+portfolio_return = np.matmul(np.array(average_returns),optimal_weights.T)
+annualized_risk = np.sqrt(portfolio_risk*251) 
+annualize_return = 251*np.array(portfolio_return) 
+sharpe_ratio = (annualize_return-annual_risk_free)/annualized_risk 
 
-#set precision for printing results
+#Set precision for printing results
 np.set_printoptions(precision=3, suppress = True)
 
-
-#display results
-print('Maximal Sharpe Ratio: ', maxSharpeRatio, '\nAnnualized Risk (%):  ', \
-      annRisk, '\nAnnualized Expected Portfolio Return(%):  ', annRet)
-print('\nOptimal weights (%):\n',  xOptimalArray.T*100 )
+#Display results
+print('Maximal Sharpe Ratio: ', sharpe_ratio)
+print('\nAnnualized Risk (%):  ',annualized_risk)
+print( '\nAnnualized Expected Portfolio Return(%):  ', annualize_return)
+print('\nOptimal weights (%):\n',  optimal_weights.T*100 )
