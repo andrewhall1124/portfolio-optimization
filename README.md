@@ -1,6 +1,6 @@
-## Portfolio Optimization
+# Portfolio Optimization
 
-# Setup
+### Setup
 This python script uses the TwelveData API
 - Get your own API key at https://twelvedata.com/
 - Create a config.ini file
