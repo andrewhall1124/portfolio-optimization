@@ -1,4 +1,4 @@
-# Portfolio Optimization
+## Portfolio Optimization
 
 # Setup
 This python script uses the TwelveData API
