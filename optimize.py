@@ -5,21 +5,21 @@ import configparser
 import time
 import requests as rq
 
+## Configuration ##
 config = configparser.ConfigParser()
 config.read('config.ini')
+API_KEY = config['API']['API_KEY']
 
 # Record the start time
 start_time = time.time()
 
-tickers = [ 'kmx', 'sft', 'vrm'] #### INPUT IS RIGHT HERE
+## INPUTS ##
+tickers = [ 'f', 'dis', 'aapl']
 start_date = '2020-09-23 15:03:00'
 end_date = '2023-09-23 15:04:00'
 interval = '1day'
 
-## Fetching and setting up all of the data ##
-
 # Fetching stock data from 12 Data API
-API_KEY = config['API']['API_KEY']
 url = f"https://api.twelvedata.com/time_series?symbol={','.join(tickers)}&interval={interval}&start_date={start_date}&end_date={end_date}&apikey={API_KEY}"
 print(f"\nFetching stock data for \"{','.join(tickers)}\"")
 response = rq.get(url)
@@ -50,7 +50,7 @@ covariance_matrix = np.cov(stock_returns_matrix)
 
 ## Optimization function ##
 
-def maximize_that_fricking_sharpe_ratio(average_returns, covariance_matrix, risk_free, portfolio_size):
+def maximization_function(average_returns, covariance_matrix, risk_free, portfolio_size):
     
     # define maximization of Sharpe Ratio using principle of duality
     def  f(x, average_returns, covariance_matrix, risk_free, portfolio_size):
@@ -77,7 +77,7 @@ def maximize_that_fricking_sharpe_ratio(average_returns, covariance_matrix, risk
     #invoke minimize solver
     opt = optimize.minimize (f, x0 = xinit, args = (average_returns, covariance_matrix,\
                              risk_free, portfolio_size), method = 'SLSQP',  \
-                             bounds = bnds, constraints = cons, tol = 10**-3)
+                             bounds = bnds, constraints = cons, tol = 10**-10)
     
     return opt
 
@@ -90,7 +90,7 @@ annual_risk_free= 5.4 / 100
 daily_risk_free = (np.power((1 + annual_risk_free),  (1.0 / 365.0)) - 1.0) * 100 
 
 #Compute maximal Sharpe Ratio and optimal weights
-result = maximize_that_fricking_sharpe_ratio(average_returns, covariance_matrix, daily_risk_free, portfolio_size)
+result = maximization_function(average_returns, covariance_matrix, daily_risk_free, portfolio_size)
 optimal_weights = np.array([result.x])
 
 #Compute other metrics  
